@@ -8,6 +8,6 @@
         </UrlAndUserName>
       </list>
     </option>
-    <option name="cloneParentDir" value="$USER_HOME$/AndroidStudioProjects" />
+    <option name="cloneParentDir" value="$USER_HOME$/AndroidStudioProjects/rvi_media_demo" />
   </component>
 </application>
