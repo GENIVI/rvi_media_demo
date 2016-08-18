@@ -1,5 +1,6 @@
 package jlr.demo.media.rvi.rvi_media_demo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -45,9 +47,11 @@ public class RviMediaDemo extends FragmentActivity {
         final ImageButton play_pause = (ImageButton) findViewById(R.id.playPauseButton);
         play_pause.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent qr_read = new Intent("com.google.zxing.client.android.SCAN");
-                qr_read.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                startActivityForResult(qr_read, 0);
+                Context appContext = getApplicationContext();
+                CharSequence toastMsg = "Connecting...";
+                int duration = Toast.LENGTH_LONG;
+                Toast connecting = Toast.makeText(appContext, toastMsg, duration);
+                connecting.show();
             }
         });
     }

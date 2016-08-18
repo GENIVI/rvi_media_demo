@@ -16,7 +16,7 @@
             android:id="@+id/text"
             android:textSize="20dp"
             android:text="AAAAAAAAAAAAA" />
-        <Button
+        <ImageButton
             android:layout_width="190dp"
             android:layout_height="120dp"
             android:text="New Button"
