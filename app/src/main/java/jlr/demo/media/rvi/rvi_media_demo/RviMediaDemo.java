@@ -1,10 +1,14 @@
 package jlr.demo.media.rvi.rvi_media_demo;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -38,6 +42,14 @@ public class RviMediaDemo extends FragmentActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        final ImageButton play_pause = (ImageButton) findViewById(R.id.playPauseButton);
+        play_pause.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent qr_read = new Intent("com.google.zxing.client.android.SCAN");
+                qr_read.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                startActivityForResult(qr_read, 0);
+            }
+        });
     }
 
     @Override
