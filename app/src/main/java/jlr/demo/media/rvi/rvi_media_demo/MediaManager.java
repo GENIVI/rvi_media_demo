@@ -20,7 +20,6 @@ import android.content.res.AssetManager;
 import android.util.Log;
 import com.google.gson.internal.LinkedTreeMap;
 import com.jaguarlandrover.rvi.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -35,13 +34,13 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class MediaManager implements ServiceBundle.ServiceBundleListener
 {
-    private final static String TAG = "HVACDemo:HVACManager";
+    private final static String TAG = "MediaDemo:MediaManager";
 
     private final static String RVI_DOMAIN      = "genivi.org";
-    private final static String RVI_BUNDLE_NAME = "hvac";
+    private final static String RVI_BUNDLE_NAME = "media";
 
-    private static Context applicationContext = HVACApplication.getContext();
-    private static ServiceBundle hvacServiceBundle;
+    private static Context applicationContext = RviMediaDemo.getContext();
+    private static ServiceBundle mediaServiceBundle;
 
     private static HVACManager ourInstance = new HVACManager();
 
