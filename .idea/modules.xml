@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/MediaDemo.iml" filepath="$PROJECT_DIR$/MediaDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/rvi/rvi.iml" filepath="$PROJECT_DIR$/rvi/rvi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/rvi_media_demo.iml" filepath="$PROJECT_DIR$/rvi_media_demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rvi_core_android/rvi.iml" filepath="$PROJECT_DIR$/rvi_core_android/rvi.iml" />
     </modules>
   </component>
 </project>
