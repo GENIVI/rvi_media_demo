@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="myName" value="Mozilla" />
+    <option name="notice" value="Copyright (c) &amp;#36;today.year. Jaguar Land Rover.&#10;This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. &#10;If a copy of the MPL was not distributed with this file, You can obtain one &#10;at https://mozilla.org/MPL/2.0/.&#10;File: &amp;#36;file.fileName&#10;Project: &amp;#36;project.name&#10;Created by &amp;#36;username on &amp;#36;today" />
+  </copyright>
+</component>

@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':rvi'
+project(':rvi').projectDir = new File('rvi_core_android')
