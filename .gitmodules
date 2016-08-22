@@ -1,0 +1,3 @@
+[submodule "rvi_core_android"]
+	path = rvi_core_android
+	url = git@github.com:PDXostc/rvi_core_android.git
