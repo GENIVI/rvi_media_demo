@@ -1,4 +1,3 @@
 <resources>
-    <string name="app_name">rvi_media_demo</string>
-    <string name="companylogo">companyLogo</string>
+    <string name="app_name">MediaDemo</string>
 </resources>

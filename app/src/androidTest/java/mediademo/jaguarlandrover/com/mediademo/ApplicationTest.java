@@ -1,4 +1,4 @@
-package jlr.demo.media.rvi.rvi_media_demo;
+package mediademo.jaguarlandrover.com.mediademo;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
