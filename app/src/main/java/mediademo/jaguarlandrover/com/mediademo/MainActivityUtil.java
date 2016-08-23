@@ -19,6 +19,7 @@ public class MainActivityUtil {
     public static HashMap<Integer, String> initializeViewToServiceIdMap() {
         HashMap<Integer, String> initial = new HashMap<>();
 
-        initial.put(R.id.playPauseButton,   MediaServiceIdentifier.PlayPause.value());
+        initial.put(R.id.playPauseButton,   MediaServiceIdentifier.PLAY_PAUSE.value());
+        return initial;
     }
 }

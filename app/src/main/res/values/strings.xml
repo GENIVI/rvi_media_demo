@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MediaDemo</string>
+    <string name="play_pause">PLAYPAUSE</string>
 </resources>

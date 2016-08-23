@@ -39,6 +39,7 @@ captures/
 *.idea/libraries/*.xml
 *.idea/inspectionProfiles/*
 *.idea/vcs.xml
+*.idea/dictionaries/*
 
 # Keystore files
 *.jks

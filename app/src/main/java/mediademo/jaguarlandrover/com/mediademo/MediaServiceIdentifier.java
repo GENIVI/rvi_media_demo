@@ -12,5 +12,24 @@ package mediademo.jaguarlandrover.com.mediademo;/* * * * * * * * * * * * * * * *
 *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-public class MediaServiceIdentifier {
+public enum MediaServiceIdentifier {
+    PLAY_PAUSE("PLAYPAUSE"),
+    NONE("none");
+
+    private final String mIdentifier;
+
+    MediaServiceIdentifier(String identifier){
+        mIdentifier = identifier;
+    }
+
+    public final String value() {
+        return mIdentifier;
+    }
+
+    public static MediaServiceIdentifier get(String identifier) {
+        switch(identifier) {
+            case "PlayPause": return PLAY_PAUSE;
+        }
+        return NONE;
+    }
 }
