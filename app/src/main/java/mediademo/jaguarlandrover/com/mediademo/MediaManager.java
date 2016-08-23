@@ -18,7 +18,7 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
 
     @Override
     public void onServiceInvoked(ServiceBundle serviceBundle, String serviceIdentifier, Object parameters) {
-        
+
     }
 
     public interface MediaManagerListener {
