@@ -12,13 +12,5 @@ package mediademo.jaguarlandrover.com.mediademo;/* * * * * * * * * * * * * * * *
 *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-import java.util.HashMap;
-
-public class MainActivityUtil {
-
-    public static HashMap<Integer, String> initializeViewToServiceIdMap() {
-        HashMap<Integer, String> initial = new HashMap<>();
-
-        initial.put(R.id.playPauseButton,   MediaServiceIdentifier.PlayPause.value());
-    }
+public class MediaServiceIdentifier {
 }
