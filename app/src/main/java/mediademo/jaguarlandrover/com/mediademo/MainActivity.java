@@ -14,10 +14,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jaguarlandrover.rvi.Util;
+
+import java.util.HashMap;
 
 import mediademo.jaguarlandrover.com.mediademo.MediaManager.MediaManagerListener;
 
@@ -29,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private HashMap<Integer, String> mViewIdsToSeriviceIds;
+    private Boolean mPlaying = false;
 
     @Override
     public void onNodeConnected() {
@@ -50,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mViewIdsToSeriviceIds = MainActivityUtil.initializeViewToServiceIdMap();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -94,5 +102,16 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    String getServiceIdentifiersFromViewId(Integer uiControlId) {
+        return mViewIdsToSeriviceIds.get(uiControlId);
+    }
+
+    public void playPauseButtonPressed(View view) {
+        Log.d(TAG, Util.getMethodName());
+        //togglePlayPauseButton
+        MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()),
+                Boolean.toString(mPlaying));
     }
 }

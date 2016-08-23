@@ -21,6 +21,9 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
 
     }
 
+    public static void invokeService(String serviceId, String value) {
+    }
+
     public interface MediaManagerListener {
         void onNodeConnected();
         void onNodeDisconnected();
