@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    private HashMap<Integer, String> mViewIdsToSeriviceIds;
+    private HashMap<Integer, String> mViewIdsToServiceIds;
     private Boolean mPlaying = false;
 
     @Override
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mViewIdsToSeriviceIds = MainActivityUtil.initializeViewToServiceIdMap();
+        mViewIdsToServiceIds = MainActivityUtil.initializeViewToServiceIdMap();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
     }
 
     String getServiceIdentifiersFromViewId(Integer uiControlId) {
-        return mViewIdsToSeriviceIds.get(uiControlId);
+        return mViewIdsToServiceIds.get(uiControlId);
     }
 
     public void playPauseButtonPressed(View view) {
