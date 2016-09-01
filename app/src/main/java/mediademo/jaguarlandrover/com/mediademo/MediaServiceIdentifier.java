@@ -17,6 +17,8 @@ public enum MediaServiceIdentifier {
     PLAY("PLAY"),
     PAUSE("PAUSE"),
     NEXT("NEXT"),
+    SUBSCRIBE("subscribe"),
+    UNSUBSCRIBE("unsubscribe"),
     NONE("none");
 
     private final String mIdentifier;

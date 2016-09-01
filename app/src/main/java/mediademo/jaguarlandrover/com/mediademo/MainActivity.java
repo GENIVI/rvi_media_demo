@@ -10,11 +10,21 @@
 
 package mediademo.jaguarlandrover.com.mediademo;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -34,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
      */
     private GoogleApiClient client;
     private HashMap<Integer, String> mViewIdsToServiceIds;
+    private HashMap<String, Integer> mServiceIdsToViewIds;
     private Boolean mPlaying = false;
 
     @Override
@@ -52,16 +63,66 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, Util.getMethodName());
+        MediaManager.setListener(this);
+        if (!MediaManager.isRviConfigured()) {
+            Log.d(TAG, "RVI Not configured, figure out the toolbar");
+            //settingsBar.show();
+        } else {
+            MediaManager.start();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mViewIdsToServiceIds = MainActivityUtil.initializeViewToServiceIdMap();
+        mServiceIdsToViewIds = MainActivityUtil.initializeServiceToViewIdMap();
+
+        //initalize button off images
+        //initalize button on images
+        Toolbar settingsToolbar = (Toolbar) findViewById(R.id.settings_bar);
+        setSupportActionBar(settingsToolbar);
+        //ActionBar ab = getSupportActionBar();
+        //ab.setDisplayHomeAsUpEnabled(true);
+
+        //playpause onclick
+        ImageButton play_pause = (ImageButton) findViewById(R.id.playPauseButton);
+        play_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playPauseButtonPressed(view);
+            }
+        });
+
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings_bar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Log.d(TAG, "You selected settings");
+                startActivity(new Intent(this, PreferencesActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -113,5 +174,14 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         //togglePlayPauseButton
         MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()),
                 Boolean.toString(mPlaying));
+    }
+
+    private void loadSettingsLayout() {
+        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+        View content = root.getChildAt(0);
+        LinearLayout toolbarContainer = (LinearLayout) View.inflate(this, R.layout.settings_layout, null);
+        root.removeAllViews();
+        //toolbarContainer.addView(content);
+        root.addView(toolbarContainer);
     }
 }

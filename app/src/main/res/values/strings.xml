@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">MediaDemo</string>
     <string name="play_pause">PLAYPAUSE</string>
+    <string name="proxy_server_url_prefs_string">c.serverUrl</string>
+    <string name="media_shared_prefs_string">com.jaguarlandrover.media.settings</string>
+    <string name="using_proxy_server_prefs_string">.usingProxyServer</string>
+    <string name="server_url_prefs_string">c.serverUrl</string>
+    <string name="server_port_prefs_string">.serverPort</string>
+    <string name="proxy_server_port_prefs_string">.proxyServerPort</string>
+    <string name="playpause">playPause</string>
+    <string name="action_settings">PlaceHolder</string>
+    <string name="playpausebutton">playPauseButton</string>
+    <string name="pref_sync">Sync</string>
 </resources>
