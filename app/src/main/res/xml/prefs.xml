@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
-        android:key="username"
-        android:title="Username"
-        android:summary="Your name"
+        android:key="server_url"
+        android:title="Server URL"
+        android:summary="RVI Server URL"
+        />
+    <EditTextPreference
+        android:key="server_port"
+        android:title="Server Port"
+        android:summary="RVI Server Port"
+        android:numeric="integer"
         />
 </PreferenceScreen>

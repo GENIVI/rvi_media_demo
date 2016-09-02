@@ -11,8 +11,11 @@
 package mediademo.jaguarlandrover.com.mediademo;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,10 +28,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jaguarlandrover.rvi.RVINode;
 import com.jaguarlandrover.rvi.Util;
 
 import java.util.HashMap;
@@ -69,6 +74,11 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         MediaManager.setListener(this);
         if (!MediaManager.isRviConfigured()) {
             Log.d(TAG, "RVI Not configured, figure out the toolbar");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            Log.d(TAG, prefs.getString("server_url", "None"));
+            String msg = "Configure RVI in settings";
+            Toast configureToast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
+            configureToast.show();
             //settingsBar.show();
         } else {
             MediaManager.start();
@@ -93,13 +103,13 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
 
         //playpause onclick
         ImageButton play_pause = (ImageButton) findViewById(R.id.playPauseButton);
+        play_pause.setImageResource(R.drawable.ic_play_arrow_black_24dp);
         play_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 playPauseButtonPressed(view);
             }
         });
-
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -171,17 +181,20 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
 
     public void playPauseButtonPressed(View view) {
         Log.d(TAG, Util.getMethodName());
-        //togglePlayPauseButton
-        MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()),
-                Boolean.toString(mPlaying));
-    }
-
-    private void loadSettingsLayout() {
-        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-        View content = root.getChildAt(0);
-        LinearLayout toolbarContainer = (LinearLayout) View.inflate(this, R.layout.settings_layout, null);
-        root.removeAllViews();
-        //toolbarContainer.addView(content);
-        root.addView(toolbarContainer);
+        if (!MediaManager.isRviConfigured()) {
+            String msg = "Configure RVI in settings";
+            Toast configureToast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
+            configureToast.show();
+        }
+        ImageButton playpause = (ImageButton) findViewById(R.id.playPauseButton);
+        if (true == mPlaying) {
+            playpause.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+            mPlaying = false;
+        }else{
+            playpause.setImageResource(R.drawable.ic_pause_black_24dp);
+            mPlaying = true;
+        }
+        //MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()),
+        //        Boolean.toString(mPlaying));
     }
 }
