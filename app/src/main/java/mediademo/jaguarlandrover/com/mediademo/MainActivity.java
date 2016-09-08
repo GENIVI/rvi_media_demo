@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");

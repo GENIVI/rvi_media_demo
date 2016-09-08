@@ -25,4 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile project(path: ':rvi')
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'io.jsonwebtoken:jjwt:0.6.0'
 }
