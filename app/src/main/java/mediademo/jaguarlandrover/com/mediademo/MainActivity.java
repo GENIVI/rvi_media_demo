@@ -12,12 +12,9 @@ package mediademo.jaguarlandrover.com.mediademo;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,15 +22,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.jaguarlandrover.rvi.RVINode;
 import com.jaguarlandrover.rvi.Util;
 
 import java.util.HashMap;
@@ -191,11 +185,10 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         if (true == mPlaying) {
             playpause.setImageResource(R.drawable.ic_play_arrow_black_24dp);
             mPlaying = false;
-        }else{
+        } else {
             playpause.setImageResource(R.drawable.ic_pause_black_24dp);
             mPlaying = true;
         }
-        //MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()),
-        //        Boolean.toString(mPlaying));
+        MediaManager.invokeService("mediacontrol", "PLAYPAUSE", Boolean.toString(mPlaying));
     }
 }

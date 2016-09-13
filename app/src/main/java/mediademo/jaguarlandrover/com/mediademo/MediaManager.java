@@ -17,6 +17,7 @@ import android.content.res.AssetManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.jaguarlandrover.rvi.RVINode;
 import com.jaguarlandrover.rvi.ServiceBundle;
 
@@ -46,18 +47,17 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
     private static RVINode node;
     private final static String TAG = "MediaDemo:MediaManager";
     private final static String RVI_DOMAIN = "genivi.org";
-    private final static String RVI_BUNDLE_NAME = "something";
+    private final static String RVI_BUNDLE_NAME = "media";
     private final static ArrayList<String> localServiceIdentifiers =
             new ArrayList<>(Arrays.asList(
-                    MediaServiceIdentifier.PLAY_PAUSE.value(),
-                    MediaServiceIdentifier.PLAY.value()
+                    MediaServiceIdentifier.PLAY_PAUSE.value()
             ));
 
     @Override
     public void onServiceInvoked(ServiceBundle serviceBundle,
                                  String serviceIdentifier,
                                  Object parameters) {
-
+        if (mListener != null) mListener.onServiceInvoked(serviceIdentifier, ((LinkedTreeMap) parameters).get("value"));
     }
 
     public static void setListener(MediaManagerListener listener) {
@@ -136,19 +136,19 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
         return key_store;
     }
 
-    ;
-
-    public static void invokeService(String serviceId, String value) {
+    public static void invokeService(String serviceId, String target, String value) {
+        Log.d(TAG, "Invoke " + serviceId);
         HashMap<String, Object> invokeParams = new HashMap<>(2);
 
         invokeParams.put("sending_node", RVI_DOMAIN + "/" + RVINode.getLocalNodeIdentifier(applicationContext) + "/");
+        invokeParams.put("target", target);
         invokeParams.put("value", value);
 
         mediaServiceBundle.invokeService(serviceId, invokeParams, 360000);
     }
 
     public static void subscribeToMediaRvi() {
-        invokeService(MediaServiceIdentifier.SUBSCRIBE.value(),
+        invokeService(MediaServiceIdentifier.SUBSCRIBE.value(), null,
                 "{\"node\":\"" + RVI_DOMAIN + "/" + RVINode.getLocalNodeIdentifier(applicationContext) + "/\"}");
     }
 
@@ -161,7 +161,7 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
             node.setServerPort(getServerPort());
         }
         try {
-            node.setKeyStores(getKeyStore("device-certs", "BKS", "password"),
+            node.setKeyStores(getKeyStore("server-certs", "BKS", "password"),
                     getKeyStore("client.p12", "PKCS12", "password"), "password");
         } catch (CertificateException e) {
             e.printStackTrace();
@@ -183,6 +183,7 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
         mediaServiceBundle.setListener(ourInstance);
         node.addBundle(mediaServiceBundle);
         node.connect();
+
     }
 
     public interface MediaManagerListener {

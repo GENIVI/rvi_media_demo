@@ -14,8 +14,6 @@ package mediademo.jaguarlandrover.com.mediademo;/* * * * * * * * * * * * * * * *
 
 public enum MediaServiceIdentifier {
     PLAY_PAUSE("PLAYPAUSE"),
-    PLAY("PLAY"),
-    PAUSE("PAUSE"),
     NEXT("NEXT"),
     SUBSCRIBE("subscribe"),
     UNSUBSCRIBE("unsubscribe"),
@@ -34,8 +32,6 @@ public enum MediaServiceIdentifier {
     public static MediaServiceIdentifier get(String identifier) {
         switch(identifier) {
             case "PlayPause": return PLAY_PAUSE;
-            case "Play":      return PLAY;
-            case "Pause":     return PAUSE;
             case "Next":      return NEXT;
         }
         return NONE;
