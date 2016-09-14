@@ -34,16 +34,40 @@
         <ImageButton
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:id="@+id/otherButton"
+            android:id="@+id/playPauseButton"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center" />
+
+        <ImageButton
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:id="@+id/skipNext"
+            android:layout_gravity="right|center_vertical" />
+
+        <ImageButton
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:id="@+id/skipPrevious"
+            android:layout_gravity="left|center_vertical" />
+
+        <ImageButton
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:id="@+id/shuffle"
+            android:layout_gravity="right|bottom" />
+
+        <ImageButton
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:id="@+id/repeat"
             android:layout_gravity="center_horizontal|bottom" />
 
         <ImageButton
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:id="@+id/playPauseButton"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center" />
+            android:id="@+id/playList"
+            android:layout_gravity="left|bottom" />
     </FrameLayout>
 
 

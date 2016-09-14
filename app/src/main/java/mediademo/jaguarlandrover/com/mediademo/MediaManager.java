@@ -48,6 +48,7 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
     private final static String TAG = "MediaDemo:MediaManager";
     private final static String RVI_DOMAIN = "genivi.org";
     private final static String RVI_BUNDLE_NAME = "media";
+    private final static String SERVICE_ID = "mediacontrol";
     private final static ArrayList<String> localServiceIdentifiers =
             new ArrayList<>(Arrays.asList(
                     MediaServiceIdentifier.PLAY_PAUSE.value()
@@ -136,19 +137,19 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
         return key_store;
     }
 
-    public static void invokeService(String serviceId, String target, String value) {
-        Log.d(TAG, "Invoke " + serviceId);
+    public static void invokeService(String target, String value) {
+        Log.d(TAG, "Invoke " + target);
         HashMap<String, Object> invokeParams = new HashMap<>(2);
 
         invokeParams.put("sending_node", RVI_DOMAIN + "/" + RVINode.getLocalNodeIdentifier(applicationContext) + "/");
         invokeParams.put("target", target);
         invokeParams.put("value", value);
 
-        mediaServiceBundle.invokeService(serviceId, invokeParams, 360000);
+        mediaServiceBundle.invokeService(SERVICE_ID, invokeParams, 360000);
     }
 
     public static void subscribeToMediaRvi() {
-        invokeService(MediaServiceIdentifier.SUBSCRIBE.value(), null,
+        invokeService(MediaServiceIdentifier.SUBSCRIBE.value(),
                 "{\"node\":\"" + RVI_DOMAIN + "/" + RVINode.getLocalNodeIdentifier(applicationContext) + "/\"}");
     }
 

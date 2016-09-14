@@ -189,6 +189,6 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
             playpause.setImageResource(R.drawable.ic_pause_black_24dp);
             mPlaying = true;
         }
-        MediaManager.invokeService("mediacontrol", "PLAYPAUSE", Boolean.toString(mPlaying));
+        MediaManager.invokeService("PLAYPAUSE", Boolean.toString(mPlaying));
     }
 }
