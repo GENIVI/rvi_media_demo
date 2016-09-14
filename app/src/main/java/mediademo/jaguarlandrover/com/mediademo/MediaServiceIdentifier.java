@@ -15,6 +15,12 @@ package mediademo.jaguarlandrover.com.mediademo;/* * * * * * * * * * * * * * * *
 public enum MediaServiceIdentifier {
     PLAY_PAUSE("PLAYPAUSE"),
     NEXT("NEXT"),
+    PREVIOUS("PREVIOUS"),
+    SHUFFLE("GETSHUFFLE"),
+    REPEAT("GETREPEAT"),
+    DURATION("GETDURATION"),
+    VOLUME("GETVOLUME"),
+    PLAYLIST("GETPLAYLIST"),
     SUBSCRIBE("subscribe"),
     UNSUBSCRIBE("unsubscribe"),
     NONE("none");
@@ -31,8 +37,16 @@ public enum MediaServiceIdentifier {
 
     public static MediaServiceIdentifier get(String identifier) {
         switch(identifier) {
-            case "PlayPause": return PLAY_PAUSE;
-            case "Next":      return NEXT;
+            case "PlayPause":   return PLAY_PAUSE;
+            case "Next":        return NEXT;
+            case "Previous":    return PREVIOUS;
+            case "Shuffle":     return SHUFFLE;
+            case "Repeat":      return REPEAT;
+            case "Duration":    return DURATION;
+            case "Volume":      return VOLUME;
+            case "PlayList":    return PLAYLIST;
+            case "Subscribe":   return SUBSCRIBE;
+            case "Unsubscribe": return UNSUBSCRIBE;
         }
         return NONE;
     }

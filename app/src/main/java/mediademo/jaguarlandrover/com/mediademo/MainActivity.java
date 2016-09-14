@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
     private GoogleApiClient client;
     private HashMap<Integer, String> mViewIdsToServiceIds;
     private HashMap<String, Integer> mServiceIdsToViewIds;
+    private HashMap<Integer, Integer> mButtonOffImages;
     private Boolean mPlaying = false;
 
     @Override
@@ -97,8 +98,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         //ab.setDisplayHomeAsUpEnabled(true);
 
         //playpause onclick
-        ImageButton play_pause = (ImageButton) findViewById(R.id.playPauseButton);
-        play_pause.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+        mButtonOffImages = MainActivityUtil.initializeButtonOffImageMap();
         play_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
