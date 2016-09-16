@@ -11,4 +11,17 @@
     <string name="action_settings">PlaceHolder</string>
     <string name="playpausebutton">playPauseButton</string>
     <string name="pref_sync">Sync</string>
+    <string name="mute_signal">onMuteAttributeChanged</string>
+    <string name="shuffle_signal">onShuffleAttributeChanged</string>
+    <string name="repeat_signal">onRepeatAttributeChanged</string>
+    <string name="rate_signal">onRateAttributeChanged</string>
+    <string name="volume_signal">onVolumeAttributeChanged</string>
+    <string name="next_signal">onCanGoNextAttributeChanged</string>
+    <string name="previous_signal">onCanGoPreviousAttributeChanged</string>
+    <string name="pause_signal">onCanPauseAttributeChanged</string>
+    <string name="play_signal">onCanPlayAttributeChanged</string>
+    <string name="seek_signal">onCanSeekAttributeChanged</string>
+    <string name="current_track_signal">onCurrentTrackAttributeChanged</string>
+    <string name="playback_signal">onPlaybackStatusAttributeChanged</string>
+    <string name="duration_signal">onDurationAttributeChanged</string>
 </resources>

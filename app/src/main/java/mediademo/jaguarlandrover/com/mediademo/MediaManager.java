@@ -51,14 +51,14 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
     private final static String SERVICE_ID = "mediacontrol";
     private final static ArrayList<String> localServiceIdentifiers =
             new ArrayList<>(Arrays.asList(
-                    MediaServiceIdentifier.PLAY_PAUSE.value()
+                    MediaServiceIdentifier.SUBSCRIBE.value()
             ));
 
     @Override
     public void onServiceInvoked(ServiceBundle serviceBundle,
                                  String serviceIdentifier,
                                  Object parameters) {
-        if (mListener != null) mListener.onServiceInvoked(serviceIdentifier, ((LinkedTreeMap) parameters).get("value"));
+        if (mListener != null) mListener.onServiceInvoked(serviceIdentifier, parameters);
     }
 
     public static void setListener(MediaManagerListener listener) {
@@ -149,8 +149,8 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
     }
 
     public static void subscribeToMediaRvi() {
-        invokeService(MediaServiceIdentifier.SUBSCRIBE.value(),
-                "{\"node\":\"" + RVI_DOMAIN + "/" + RVINode.getLocalNodeIdentifier(applicationContext) + "/\"}");
+        //invokeService(MediaServiceIdentifier.SUBSCRIBE.value(),
+        //        "{\"node\":\"" + RVI_DOMAIN + "/" + RVINode.getLocalNodeIdentifier(applicationContext) + "/\"}");
     }
 
     public static void start() {

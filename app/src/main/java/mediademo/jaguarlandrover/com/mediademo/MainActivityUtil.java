@@ -51,6 +51,43 @@ public class MainActivityUtil {
         offImages.put(R.id.skipPrevious, R.drawable.ic_skip_previous_black_24dp);
         offImages.put(R.id.repeat, R.drawable.ic_repeat_black_24dp);
         offImages.put(R.id.shuffle, R.drawable.ic_shuffle_black_24dp);
-        offImages.put(R.id.playList, R.drawable.ic_playlist_play_black_24dp);
+        offImages.put(R.id.playListButton, R.drawable.ic_playlist_play_black_24dp);
+        return offImages;
+    }
+
+    public static HashMap<Integer, Integer> initializeButtonOnImagesMap() {
+        HashMap<Integer, Integer> onImages = new HashMap<>();
+
+        onImages.put(R.id.playPauseButton, R.drawable.ic_pause_black_24dp);
+        onImages.put(R.id.skipNext, R.drawable.ic_skip_next_black_24dp);
+        onImages.put(R.id.skipPrevious, R.drawable.ic_skip_previous_black_24dp);
+        onImages.put(R.id.repeat, R.drawable.ic_repeat_white_24dp);
+        onImages.put(R.id.shuffle, R.drawable.ic_shuffle_white_24dp);
+        onImages.put(R.id.playListButton, R.drawable.ic_playlist_play_black_24dp);
+        return onImages;
+    }
+
+    public static HashMap<Integer, Boolean> initializeButtonState() {
+        HashMap<Integer, Boolean> states = new HashMap<>();
+
+        states.put(R.id.playPauseButton, false);
+        states.put(R.id.skipNext, false);
+        states.put(R.id.skipPrevious, false);
+        states.put(R.id.repeat, false);
+        states.put(R.id.shuffle, false);
+        states.put(R.id.playListButton, false);
+        return states;
+    }
+
+    public static HashMap<Integer, Integer> initializeSignaltoViewId() {
+        HashMap<Integer, Integer> signals = new HashMap<>();
+
+        signals.put(R.string.play_signal, R.id.playPauseButton);
+        signals.put(R.string.pause_signal, R.id.playPauseButton);
+        signals.put(R.string.next_signal, R.id.skipNext);
+        signals.put(R.string.previous_signal, R.id.skipPrevious);
+        signals.put(R.string.shuffle_signal, R.id.shuffle);
+        signals.put(R.string.repeat_signal, R.id.repeat);
+        return signals;
     }
 }

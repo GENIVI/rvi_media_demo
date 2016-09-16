@@ -16,13 +16,12 @@ public enum MediaServiceIdentifier {
     PLAY_PAUSE("PLAYPAUSE"),
     NEXT("NEXT"),
     PREVIOUS("PREVIOUS"),
-    SHUFFLE("GETSHUFFLE"),
-    REPEAT("GETREPEAT"),
-    DURATION("GETDURATION"),
-    VOLUME("GETVOLUME"),
-    PLAYLIST("GETPLAYLIST"),
-    SUBSCRIBE("subscribe"),
-    UNSUBSCRIBE("unsubscribe"),
+    SHUFFLE("GETSHUFFLEATTRIBUTE"),
+    REPEAT("GETREPEATATTRIBUTE"),
+    DURATION("GETDURATIONATTRIBUTE"),
+    VOLUME("GETVOLUMEATTRIBUTE"),
+    PLAYLIST("OPENPLAYLIST"),
+    SUBSCRIBE("SUBSCRIBE"),
     NONE("none");
 
     private final String mIdentifier;
@@ -46,7 +45,6 @@ public enum MediaServiceIdentifier {
             case "Volume":      return VOLUME;
             case "PlayList":    return PLAYLIST;
             case "Subscribe":   return SUBSCRIBE;
-            case "Unsubscribe": return UNSUBSCRIBE;
         }
         return NONE;
     }

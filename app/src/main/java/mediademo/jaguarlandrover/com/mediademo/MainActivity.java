@@ -31,6 +31,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.jaguarlandrover.rvi.Util;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import mediademo.jaguarlandrover.com.mediademo.MediaManager.MediaManagerListener;
 
@@ -44,29 +46,32 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
     private GoogleApiClient client;
     private HashMap<Integer, String> mViewIdsToServiceIds;
     private HashMap<String, Integer> mServiceIdsToViewIds;
+    private HashMap<Integer, Integer> mSignalIdsToViewIds;
     private HashMap<Integer, Integer> mButtonOffImages;
-    private Boolean mPlaying = false;
+    private HashMap<Integer, Integer> mButtonOnImages;
+    private HashMap<Integer, Boolean> mButtonStates;
 
     @Override
     public void onNodeConnected() {
-
+        String msg = "RVI Connected!";
+        Toast connectedToast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
+        connectedToast.show();
     }
 
     @Override
     public void onNodeDisconnected() {
-
+        String msg = "RVI Disconnected!";
+        Toast connectedToast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
+        connectedToast.show();
     }
 
     @Override
     public void onServiceInvoked(String serviceIdentifier, Object parameters) {
-
+        Log.d(TAG, Util.getMethodName() + "::" + serviceIdentifier + "::" + String.valueOf(parameters));
+        //updateUI(serviceIdentifier, );
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, Util.getMethodName());
-        MediaManager.setListener(this);
+    public Boolean checkConfigured() {
         if (!MediaManager.isRviConfigured()) {
             Log.d(TAG, "RVI Not configured, figure out the toolbar");
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -74,8 +79,17 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
             String msg = "Configure RVI in settings";
             Toast configureToast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
             configureToast.show();
-            //settingsBar.show();
-        } else {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, Util.getMethodName());
+        MediaManager.setListener(this);
+        if (checkConfigured()) {
             MediaManager.start();
         }
     }
@@ -89,22 +103,20 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
 
         mViewIdsToServiceIds = MainActivityUtil.initializeViewToServiceIdMap();
         mServiceIdsToViewIds = MainActivityUtil.initializeServiceToViewIdMap();
+        mButtonStates        = MainActivityUtil.initializeButtonState();
+        mSignalIdsToViewIds  = MainActivityUtil.initializeSignaltoViewId();
 
-        //initalize button off images
-        //initalize button on images
+        //initialize button off images
+        mButtonOffImages = MainActivityUtil.initializeButtonOffImagesMap();
+        for(Map.Entry<Integer, Integer> entry : mButtonOffImages.entrySet()){
+            ImageButton temp = (ImageButton) findViewById(entry.getKey());
+            temp.setImageResource(entry.getValue());
+        }
+        //initialize button on images
+        mButtonOnImages = MainActivityUtil.initializeButtonOnImagesMap();
+
         Toolbar settingsToolbar = (Toolbar) findViewById(R.id.settings_bar);
         setSupportActionBar(settingsToolbar);
-        //ActionBar ab = getSupportActionBar();
-        //ab.setDisplayHomeAsUpEnabled(true);
-
-        //playpause onclick
-        mButtonOffImages = MainActivityUtil.initializeButtonOffImageMap();
-        play_pause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                playPauseButtonPressed(view);
-            }
-        });
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -174,21 +186,30 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         return mViewIdsToServiceIds.get(uiControlId);
     }
 
-    public void playPauseButtonPressed(View view) {
-        Log.d(TAG, Util.getMethodName());
-        if (!MediaManager.isRviConfigured()) {
-            String msg = "Configure RVI in settings";
-            Toast configureToast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
-            configureToast.show();
+    public void imageButtonPressed(View view) {
+        if (checkConfigured()) {
+            MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()), null);
+            ImageButton temp = (ImageButton) findViewById(view.getId());
+            if (mButtonStates.get(view.getId())) {
+                temp.setImageResource(mButtonOffImages.get(view.getId()));
+                mButtonStates.put(view.getId(), false);
+            } else {
+                temp.setImageResource(mButtonOnImages.get(view.getId()));
+                mButtonStates.put(view.getId(), true);
+            }
         }
-        ImageButton playpause = (ImageButton) findViewById(R.id.playPauseButton);
-        if (true == mPlaying) {
-            playpause.setImageResource(R.drawable.ic_play_arrow_black_24dp);
-            mPlaying = false;
+    }
+
+    private void updateUI(Integer signal_name, Integer value) {
+        //update button states
+        Boolean param = (value != 0);
+        mButtonStates.put(mSignalIdsToViewIds.get(signal_name), param);
+        Integer buttonId = mSignalIdsToViewIds.get(signal_name);
+        ImageButton button = (ImageButton) findViewById(buttonId);
+        if(param) {
+            button.setImageResource(mButtonOnImages.get(buttonId));
         } else {
-            playpause.setImageResource(R.drawable.ic_pause_black_24dp);
-            mPlaying = true;
+            button.setImageResource(mButtonOffImages.get(buttonId));
         }
-        MediaManager.invokeService("PLAYPAUSE", Boolean.toString(mPlaying));
     }
 }
