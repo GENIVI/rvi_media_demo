@@ -12,12 +12,28 @@ package mediademo.jaguarlandrover.com.mediademo;/* * * * * * * * * * * * * * * *
 *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-import android.widget.ImageButton;
+import android.content.Context;
+import android.content.res.Resources;
+import android.provider.MediaStore;
 
+import com.google.gson.JsonElement;
+
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivityUtil {
     private final static String TAG = "MediaDemo:MainActivityUtil";
+
+    public static List<String> getServices = Arrays.asList(
+            "GETMUTEATTRIBUTE",
+            "GETSHUFFLEATTRIBUTE",
+            "GETREPEATATTRIBUTE",
+            "GETVOLUMEATTRIBUTE",
+            "GETPLAYBACKSTATUSATTRIBUTE",
+            "GETPOSITIONATTRIBUTE",
+            "GETDURATIONATTRIBUTE",
+            "GETCURRENTPLAYQUEUE");
 
     public static HashMap<Integer, String> initializeViewToServiceIdMap() {
         HashMap<Integer, String> initial = new HashMap<>();
@@ -39,32 +55,23 @@ public class MainActivityUtil {
         initial.put(MediaServiceIdentifier.PREVIOUS.value(),R.id.skipPrevious);
         initial.put(MediaServiceIdentifier.REPEAT.value(), R.id.repeat);
         initial.put(MediaServiceIdentifier.SHUFFLE.value(), R.id.shuffle);
-        initial.put(MediaServiceIdentifier.REPEAT.value(), R.id.playList);
+        initial.put(MediaServiceIdentifier.GETPLAYLIST.value(), R.id.playList);
         return initial;
     }
 
-    public static HashMap<Integer, Integer> initializeButtonOffImagesMap() {
+    public static HashMap<Integer, Integer> initializeButtonImages() {
         HashMap<Integer, Integer> offImages = new HashMap<>();
 
-        offImages.put(R.id.playPauseButton, R.drawable.ic_play_arrow_black_24dp);
-        offImages.put(R.id.skipNext, R.drawable.ic_skip_next_black_24dp);
-        offImages.put(R.id.skipPrevious, R.drawable.ic_skip_previous_black_24dp);
-        offImages.put(R.id.repeat, R.drawable.ic_repeat_black_24dp);
-        offImages.put(R.id.shuffle, R.drawable.ic_shuffle_black_24dp);
-        offImages.put(R.id.playListButton, R.drawable.ic_playlist_play_black_24dp);
+        offImages.put(R.id.playPauseButton, R.string.icon_play);
+        offImages.put(R.id.skipNext, R.string.icon_skip_forward);
+        offImages.put(R.id.skipPrevious, R.string.icon_skip_back);
+        offImages.put(R.id.repeat, R.string.icon_repeat);
+        offImages.put(R.id.shuffle, R.string.icon_shuffle);
+        offImages.put(R.id.playList, R.string.icon_playlist);
+        offImages.put(R.id.plusButton, R.string.icon_plus);
+        offImages.put(R.id.minusButton, R.string.icon_minus);
+        offImages.put(R.id.volume, R.string.icon_volume);
         return offImages;
-    }
-
-    public static HashMap<Integer, Integer> initializeButtonOnImagesMap() {
-        HashMap<Integer, Integer> onImages = new HashMap<>();
-
-        onImages.put(R.id.playPauseButton, R.drawable.ic_pause_black_24dp);
-        onImages.put(R.id.skipNext, R.drawable.ic_skip_next_black_24dp);
-        onImages.put(R.id.skipPrevious, R.drawable.ic_skip_previous_black_24dp);
-        onImages.put(R.id.repeat, R.drawable.ic_repeat_white_24dp);
-        onImages.put(R.id.shuffle, R.drawable.ic_shuffle_white_24dp);
-        onImages.put(R.id.playListButton, R.drawable.ic_playlist_play_black_24dp);
-        return onImages;
     }
 
     public static HashMap<Integer, Boolean> initializeButtonState() {
@@ -75,19 +82,69 @@ public class MainActivityUtil {
         states.put(R.id.skipPrevious, false);
         states.put(R.id.repeat, false);
         states.put(R.id.shuffle, false);
-        states.put(R.id.playListButton, false);
+        states.put(R.id.playList, false);
+        states.put(R.id.volume, false);
+        states.put(R.id.plusButton, false);
+        states.put(R.id.minusButton, false);
         return states;
     }
 
-    public static HashMap<Integer, Integer> initializeSignaltoViewId() {
-        HashMap<Integer, Integer> signals = new HashMap<>();
+    public static HashMap<String, Integer> initializeSignaltoViewId(Context context) {
+        HashMap<String, Integer> signals = new HashMap<>();
 
-        signals.put(R.string.play_signal, R.id.playPauseButton);
-        signals.put(R.string.pause_signal, R.id.playPauseButton);
-        signals.put(R.string.next_signal, R.id.skipNext);
-        signals.put(R.string.previous_signal, R.id.skipPrevious);
-        signals.put(R.string.shuffle_signal, R.id.shuffle);
-        signals.put(R.string.repeat_signal, R.id.repeat);
+        signals.put(context.getString(R.string.play_signal), R.id.playPauseButton);
+        signals.put(context.getString(R.string.next_signal), R.id.skipNext);
+        signals.put(context.getString(R.string.previous_signal), R.id.skipPrevious);
+        signals.put(context.getString(R.string.shuffle_signal), R.id.shuffle);
+        signals.put(context.getString(R.string.shuffle_change), R.id.shuffle);
+        signals.put(context.getString(R.string.repeat_signal), R.id.repeat);
+        signals.put(context.getString(R.string.volume_signal), R.id.volume);
+        signals.put(context.getString(R.string.mute_signal), R.id.volume);
         return signals;
+    }
+
+    public static HashMap<String, Integer> initializeSignaltoInvokable() {
+        HashMap<String, Integer> signals = new HashMap<>();
+
+        signals.put(MediaServiceIdentifier.PLAY_PAUSE.value(), R.string.play_signal);
+        signals.put(MediaServiceIdentifier.SHUFFLE.value(), R.string.shuffle_signal);
+        signals.put(MediaServiceIdentifier.REPEAT.value(), R.string.repeat_signal);
+        signals.put(MediaServiceIdentifier.NEXT.value(), R.string.playlist_signal);
+        signals.put(MediaServiceIdentifier.PREVIOUS.value(), R.string.playlist_signal);
+        return signals;
+    }
+
+    public static HashMap<String, ParamGetter> initializeSignalToValue(Context context) {
+        HashMap<String, ParamGetter> signals = new HashMap<>();
+
+        signals.put(context.getString(R.string.play_signal),
+                new ParamGetter() {
+            @Override
+            public Boolean getParam(Object param) { return (boolean) param; }
+            });
+        signals.put(context.getString(R.string.shuffle_signal),
+                new ParamGetter() {
+            @Override
+            public Boolean getParam(Object param) { return (0 == ((Double) param).intValue()); }
+            });
+        signals.put(context.getString(R.string.repeat_signal),
+                new ParamGetter() {
+            @Override
+            public Boolean getParam(Object doe) {
+                return (0 == ((Double) doe).intValue());
+            }
+        });
+        signals.put(context.getString(R.string.shuffle_change),
+                new ParamGetter() {
+                    @Override
+                    public Boolean getParam(Object doe) {
+                        return (0 == ((Double) doe));
+                    }
+                });
+        return signals;
+    }
+
+    public interface ParamGetter {
+        Boolean getParam(Object doe);
     }
 }

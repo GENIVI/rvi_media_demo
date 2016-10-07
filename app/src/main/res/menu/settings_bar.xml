@@ -6,4 +6,16 @@
         android:title="Settings"
         android:icon="@drawable/ic_settings_black_24dp"
         app:showAsAction="always" />
+    <item
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:id="@+id/empty"
+        android:title="More"
+        app:showAsAction="always" >
+
+        <menu>
+            <item android:id="@+id/library_option"
+                app:showAsAction="ifRoom"
+                android:title="Library"/>
+        </menu>
+    </item>
 </menu>

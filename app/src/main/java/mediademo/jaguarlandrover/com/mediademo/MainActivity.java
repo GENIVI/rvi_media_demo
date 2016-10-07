@@ -11,10 +11,9 @@
 package mediademo.jaguarlandrover.com.mediademo;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,16 +21,20 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.internal.LinkedTreeMap;
 import com.jaguarlandrover.rvi.Util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import mediademo.jaguarlandrover.com.mediademo.MediaManager.MediaManagerListener;
@@ -44,18 +47,27 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private Boolean mRviConnected = false;
+    private Boolean mInitialized = false;
     private HashMap<Integer, String> mViewIdsToServiceIds;
     private HashMap<String, Integer> mServiceIdsToViewIds;
-    private HashMap<Integer, Integer> mSignalIdsToViewIds;
+    private HashMap<String, MainActivityUtil.ParamGetter> mSignalToValue;
+    private HashMap<String, Integer> mSignalToViewIds;
+    private HashMap<String, Integer> mSignalToInvokable;
     private HashMap<Integer, Integer> mButtonOffImages;
-    private HashMap<Integer, Integer> mButtonOnImages;
     private HashMap<Integer, Boolean> mButtonStates;
+    private HashMap<Integer, LinkedTreeMap> mediaList = new HashMap<>();
+    private HashMap<String, LinkedTreeMap> multiMedia = new HashMap<>();
+    private MediaListObject songList = MediaListObject.getInstance();
+    private Integer currentIndex;
 
     @Override
     public void onNodeConnected() {
         String msg = "RVI Connected!";
         Toast connectedToast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
         connectedToast.show();
+        mRviConnected = true;
+        MediaManager.subscribeToMediaRvi();
     }
 
     @Override
@@ -63,19 +75,52 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         String msg = "RVI Disconnected!";
         Toast connectedToast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
         connectedToast.show();
+        mRviConnected = false;
     }
 
     @Override
     public void onServiceInvoked(String serviceIdentifier, Object parameters) {
-        Log.d(TAG, Util.getMethodName() + "::" + serviceIdentifier + "::" + String.valueOf(parameters));
-        //updateUI(serviceIdentifier, );
+        Log.d(TAG, Util.getMethodName() + "::" + serviceIdentifier + "::" + parameters.toString());
+        LinkedTreeMap msg = (LinkedTreeMap) parameters;
+        String target;
+        if (msg.get("target") != null) {
+            target = msg.get("target").toString();
+        } else {
+            target = msg.get("signalName").toString().toUpperCase();
+        }
+        Integer string_id = mSignalToInvokable.get(target);
+        if (string_id != null) {
+            String actionable = getString(string_id);
+            if (actionable != null) {
+                MediaManager.invokeService(actionable, null);
+            }
+        } else {
+            Integer view_id = mSignalToViewIds.get(target);
+            MainActivityUtil.ParamGetter getter = mSignalToValue.get(target);
+            if (getter != null) {
+                Boolean new_value = getter.getParam(msg.get("value"));
+                if (view_id != null) {
+                    mButtonStates.put(view_id, new_value);
+                    updateUI(view_id);
+                }
+            }
+        }
+        if (target.equalsIgnoreCase(MediaServiceIdentifier.GETPLAYLIST.value())) {
+            currentPlayQueue(msg);
+        } else if (target.equalsIgnoreCase(MediaServiceIdentifier.CURRENT_CHANGE.value())) {
+            updateCurrentTrack((Double) msg.get("value"));
+        } else if (target.equalsIgnoreCase(MediaServiceIdentifier.GETMULTIMEDIA.value())) {
+            String child = (String) msg.get("identifiers");
+            if (child != null) {
+                MediaManager.invokeService(MediaServiceIdentifier.GETMEDIACHILD.value(), child);
+            }
+        } else if (target.equalsIgnoreCase(MediaServiceIdentifier.GETMEDIACHILD.value())) {
+            buildmultimedia(msg);
+        }
     }
 
     public Boolean checkConfigured() {
         if (!MediaManager.isRviConfigured()) {
-            Log.d(TAG, "RVI Not configured, figure out the toolbar");
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            Log.d(TAG, prefs.getString("server_url", "None"));
             String msg = "Configure RVI in settings";
             Toast configureToast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
             configureToast.show();
@@ -89,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         super.onResume();
         Log.d(TAG, Util.getMethodName());
         MediaManager.setListener(this);
-        if (checkConfigured()) {
+        if (checkConfigured() && !mRviConnected) {
             MediaManager.start();
         }
     }
@@ -100,23 +145,51 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Window window = this.getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        // finally change the color
+        window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimaryDark));
+
+        //load font
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
 
         mViewIdsToServiceIds = MainActivityUtil.initializeViewToServiceIdMap();
         mServiceIdsToViewIds = MainActivityUtil.initializeServiceToViewIdMap();
         mButtonStates        = MainActivityUtil.initializeButtonState();
-        mSignalIdsToViewIds  = MainActivityUtil.initializeSignaltoViewId();
+        mSignalToViewIds     = MainActivityUtil.initializeSignaltoViewId(getApplicationContext());
+        mSignalToInvokable   = MainActivityUtil.initializeSignaltoInvokable();
+        mSignalToValue       = MainActivityUtil.initializeSignalToValue(getApplicationContext());
 
         //initialize button off images
-        mButtonOffImages = MainActivityUtil.initializeButtonOffImagesMap();
+        mButtonOffImages = MainActivityUtil.initializeButtonImages();
         for(Map.Entry<Integer, Integer> entry : mButtonOffImages.entrySet()){
-            ImageButton temp = (ImageButton) findViewById(entry.getKey());
-            temp.setImageResource(entry.getValue());
+            Button temp = (Button) findViewById(entry.getKey());
+            temp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onButtonPressed(v);
+                }
+            });
+            temp.setTypeface(font);
+            temp.setText(entry.getValue());
         }
-        //initialize button on images
-        mButtonOnImages = MainActivityUtil.initializeButtonOnImagesMap();
 
         Toolbar settingsToolbar = (Toolbar) findViewById(R.id.settings_bar);
         setSupportActionBar(settingsToolbar);
+
+        Button playlist = (Button) findViewById(R.id.playList);
+        playlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPlayListPressed(v);
+            }
+        });
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -137,6 +210,9 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
                 Log.d(TAG, "You selected settings");
                 startActivity(new Intent(this, PreferencesActivity.class));
                 return true;
+            case R.id.library_option:
+                Log.d(TAG, "You selected library option");
+                MediaManager.invokeService(MediaServiceIdentifier.GETMULTIMEDIA.value(), null);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -186,30 +262,107 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         return mViewIdsToServiceIds.get(uiControlId);
     }
 
-    public void imageButtonPressed(View view) {
+    public void onButtonPressed(View view) {
+        if (mRviConnected) {
+            if (!mInitialized) {
+                MediaManager.initializeUIState();
+                mInitialized = true;
+            }
+        }
         if (checkConfigured()) {
-            MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()), null);
-            ImageButton temp = (ImageButton) findViewById(view.getId());
             if (mButtonStates.get(view.getId())) {
-                temp.setImageResource(mButtonOffImages.get(view.getId()));
-                mButtonStates.put(view.getId(), false);
+                //does this mean play = 0 is pause = 1??? or do I have to be explicit?
+                MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()), 1);
+                if (mButtonStates.get(view.getId())) {
+                    mButtonStates.put(view.getId(), false);
+                    updateUI(view.getId());
+                }
             } else {
-                temp.setImageResource(mButtonOnImages.get(view.getId()));
-                mButtonStates.put(view.getId(), true);
+                MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()), 0);
+                if (!mButtonStates.get(view.getId())) {
+                    mButtonStates.put(view.getId(), true);
+                    updateUI(view.getId());
+                }
             }
         }
     }
 
-    private void updateUI(Integer signal_name, Integer value) {
-        //update button states
-        Boolean param = (value != 0);
-        mButtonStates.put(mSignalIdsToViewIds.get(signal_name), param);
-        Integer buttonId = mSignalIdsToViewIds.get(signal_name);
-        ImageButton button = (ImageButton) findViewById(buttonId);
-        if(param) {
-            button.setImageResource(mButtonOnImages.get(buttonId));
-        } else {
-            button.setImageResource(mButtonOffImages.get(buttonId));
+    public void onPlayListPressed(View view) {
+        Intent listViewIntent = new Intent(this, MediaListActivity.class);
+        if (mediaList != null) {
+            ArrayList<LinkedTreeMap> mSongList = new ArrayList<>();
+            for(int index = 0; index < mediaList.size(); index++) {
+                mSongList.add(mediaList.get(index));
+            }
+            songList.setSongs(mSongList);
         }
+        startActivity(listViewIntent);
+    }
+
+    public void onAddButtonPressed(View view) {
+        //nothing
+    }
+
+    public void onMinusButtonPressed(View view) {
+        mediaList.remove(currentIndex);
+    }
+
+    private void updateUI(Integer viewId) {
+        Button temp = (Button) findViewById(viewId);
+        switch(viewId) {
+            case R.id.playPauseButton:
+                if (mButtonStates.get(viewId)) {
+                    temp.setText(R.string.icon_pause);
+                } else {
+                    temp.setText(R.string.icon_play);
+                }
+                temp.setTextColor(getResources().getColor(R.color.colorAccent));
+                break;
+            case R.id.shuffle:
+                if (mButtonStates.get(viewId)) {
+                    temp.setTextColor(getResources().getColor(R.color.colorAccent));
+                } else {
+                    temp.setTextColor(getResources().getColor(R.color.colorIcons));
+                }
+                break;
+            case R.id.repeat:
+                if (mButtonStates.get(viewId)) {
+                    temp.setTextColor(getResources().getColor(R.color.colorAccent));
+                } else {
+                    temp.setTextColor(getResources().getColor(R.color.colorIcons));
+                }
+                break;
+            default:
+                //do nothing
+                break;
+        }
+    }
+
+    public void currentPlayQueue(LinkedTreeMap params) {
+        //update the current track view
+        LinkedTreeMap track = (LinkedTreeMap) params.get("track");
+        Double index = (Double) params.get("index");
+        mediaList.put(index.intValue(), track);
+    }
+
+    public void updateCurrentTrack(Double index) {
+        if (mediaList == null) {
+            MediaManager.invokeService(MediaServiceIdentifier.GETPLAYLIST.value(), null);
+            return;
+        }
+        LinkedTreeMap track = mediaList.get(index.intValue());
+        if (track != null) {
+            currentIndex = index.intValue();
+            TextView cur_song_title = (TextView) findViewById(R.id.songTitleText);
+            TextView cur_artist = (TextView) findViewById(R.id.artistText);
+            String title = track.get("displayName").toString() + " - " + track.get("album").toString();
+            String artist = track.get("artist").toString();
+            cur_song_title.setText(title);
+            cur_artist.setText(artist);
+        }
+    }
+
+    public void buildmultimedia(LinkedTreeMap msg) {
+        //things
     }
 }

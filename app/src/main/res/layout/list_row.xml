@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="@string/icon_arrow_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/duration"
+        android:layout_alignParentEnd="true"
+        android:textSize="16dp"
+        android:padding="15dp"
+        android:id="@+id/arrow_right"
+        android:fontFamily="sans-serif" />
+
+    <TextView
+        android:text="Song Title"
+        android:id="@+id/song_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_toRightOf="@+id/song_image_container" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_marginRight="5dip"
+        android:id="@+id/song_image_container"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="13dp"
+            android:layout_weight="1"
+            android:id = "@+id/album_art"
+            app:srcCompat="@drawable/ic_music_video_black_24dp" />
+    </LinearLayout>
+
+    <TextView
+        android:text="Artist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/artist"
+        android:layout_below="@+id/song_title"
+        android:padding="10dp"
+        android:layout_toRightOf="@+id/song_image_container"/>
+
+</RelativeLayout>

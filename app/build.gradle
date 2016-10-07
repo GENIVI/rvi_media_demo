@@ -1,9 +1,25 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.0'
+    }
+}
+
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.2"
 
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+    }
+    repositories{
+        maven { url 'http://repo1.maven.org/maven2' }
+    }
     defaultConfig {
         applicationId "mediademo.jaguarlandrover.com.mediademo"
         minSdkVersion 21
@@ -22,8 +38,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:appcompat-v7:24.2.1'
     compile project(path: ':rvi')
-    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.4.0'
     compile 'io.jsonwebtoken:jjwt:0.6.0'
 }

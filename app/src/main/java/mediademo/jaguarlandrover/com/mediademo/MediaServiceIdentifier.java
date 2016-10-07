@@ -14,14 +14,25 @@ package mediademo.jaguarlandrover.com.mediademo;/* * * * * * * * * * * * * * * *
 
 public enum MediaServiceIdentifier {
     PLAY_PAUSE("PLAYPAUSE"),
+    GET_PLAY_PAUSE("GETCANPLAYATTRIBUTE"),
+    CURRENT_CHANGE("ONCURRENTTRACKATTRIBUTECHANGED"),
     NEXT("NEXT"),
     PREVIOUS("PREVIOUS"),
-    SHUFFLE("GETSHUFFLEATTRIBUTE"),
-    REPEAT("GETREPEATATTRIBUTE"),
-    DURATION("GETDURATIONATTRIBUTE"),
-    VOLUME("GETVOLUMEATTRIBUTE"),
+    SHUFFLE("SETSHUFFLEATTRIBUTE"),
+    GETSHUFFLE("GETSHUFFLEATTRIBUTE"),
+    REPEAT("SETREPEATATTRIBUTE"),
+    GETREPEAT("GETRPEATATTRIBUTE"),
+    DURATION("SETDURATIONATTRIBUTE"),
+    GETDURATION("GETDURATIONATTRIBUTE"),
+    GETPOSITION("GETPOSITIONATTRIBUTE"),
+    POSITION_CHANGE(""),
+    VOLUME("SETVOLUMEATTRIBUTE"),
+    GETVOLUME("GETVOLUMEATTRIBUTE"),
     PLAYLIST("OPENPLAYLIST"),
+    GETPLAYLIST("GETCURRENTPLAYQUEUE"),
+    GETMULTIMEDIA("DISCOVERMM"),
     SUBSCRIBE("SUBSCRIBE"),
+    GETMEDIACHILD("LISTCHILDREN"),
     NONE("none");
 
     private final String mIdentifier;
@@ -45,6 +56,7 @@ public enum MediaServiceIdentifier {
             case "Volume":      return VOLUME;
             case "PlayList":    return PLAYLIST;
             case "Subscribe":   return SUBSCRIBE;
+            case "CurrentQueue":return GETPLAYLIST;
         }
         return NONE;
     }
