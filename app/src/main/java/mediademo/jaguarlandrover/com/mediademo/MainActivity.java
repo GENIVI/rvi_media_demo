@@ -36,6 +36,7 @@ import com.jaguarlandrover.rvi.Util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import mediademo.jaguarlandrover.com.mediademo.MediaManager.MediaManagerListener;
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
     private HashMap<Integer, LinkedTreeMap> mediaList = new HashMap<>();
     private HashMap<String, LinkedTreeMap> multiMedia = new HashMap<>();
     private MediaListObject songList = MediaListObject.getInstance();
+    private LinkedTreeMap<String, LinkedTreeMap> mMediaTree;
     private Integer currentIndex;
 
     @Override
@@ -364,5 +366,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
 
     public void buildmultimedia(LinkedTreeMap msg) {
         //things
+        LinkedTreeMap child = (LinkedTreeMap) msg.get("children");
+        //mMediaTree.put((String) child.get(""))
     }
 }
