@@ -36,7 +36,6 @@ import com.jaguarlandrover.rvi.Util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.LinkedBlockingDeque;
 
 import mediademo.jaguarlandrover.com.mediademo.MediaManager.MediaManagerListener;
 
@@ -60,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
     private HashMap<Integer, LinkedTreeMap> mediaList = new HashMap<>();
     private HashMap<String, LinkedTreeMap> multiMedia = new HashMap<>();
     private MediaListObject songList = MediaListObject.getInstance();
+    private MultimediaListObject multiMediaList = MultimediaListObject.getInstance();
     private LinkedTreeMap<String, LinkedTreeMap> mMediaTree;
     private Integer currentIndex;
 
@@ -139,6 +139,12 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         if (checkConfigured() && !mRviConnected) {
             MediaManager.start();
         }
+        if (mRviConnected) {
+            MediaManager.initializeUIState();
+            if(currentIndex != null) {
+                updateCurrentTrack(currentIndex.doubleValue());
+            }
+        }
     }
 
 
@@ -214,7 +220,12 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
                 return true;
             case R.id.library_option:
                 Log.d(TAG, "You selected library option");
-                MediaManager.invokeService(MediaServiceIdentifier.GETMULTIMEDIA.value(), null);
+                if (multiMediaList.getMultiMedia().size() == 0) {
+                    multiMediaList.clearData();
+                    MediaManager.invokeService(MediaServiceIdentifier.GETMULTIMEDIA.value(), null);
+                }
+                Intent listViewIntent = new Intent(this, MultimediaListActivity.class);
+                startActivity(listViewIntent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -274,13 +285,13 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         if (checkConfigured()) {
             if (mButtonStates.get(view.getId())) {
                 //does this mean play = 0 is pause = 1??? or do I have to be explicit?
-                MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()), 1);
+                MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()), 0);
                 if (mButtonStates.get(view.getId())) {
                     mButtonStates.put(view.getId(), false);
                     updateUI(view.getId());
                 }
             } else {
-                MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()), 0);
+                MediaManager.invokeService(getServiceIdentifiersFromViewId(view.getId()), 1);
                 if (!mButtonStates.get(view.getId())) {
                     mButtonStates.put(view.getId(), true);
                     updateUI(view.getId());
@@ -290,6 +301,9 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
     }
 
     public void onPlayListPressed(View view) {
+        if (songList.getSongs().size() == 0) {
+            MediaManager.invokeService(MediaServiceIdentifier.GETPLAYLIST.value(), null);
+        }
         Intent listViewIntent = new Intent(this, MediaListActivity.class);
         if (mediaList != null) {
             ArrayList<LinkedTreeMap> mSongList = new ArrayList<>();
@@ -299,14 +313,6 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
             songList.setSongs(mSongList);
         }
         startActivity(listViewIntent);
-    }
-
-    public void onAddButtonPressed(View view) {
-        //nothing
-    }
-
-    public void onMinusButtonPressed(View view) {
-        mediaList.remove(currentIndex);
     }
 
     private void updateUI(Integer viewId) {
@@ -334,6 +340,15 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
                     temp.setTextColor(getResources().getColor(R.color.colorIcons));
                 }
                 break;
+            case R.id.volume:
+                if (mButtonStates.get(viewId)) {
+                    temp.setText(R.string.icon_volume);
+                    temp.setTextColor(getResources().getColor(R.color.colorIcons));
+                } else {
+                    temp.setText(R.string.icon_no_volume);
+                    temp.setTextColor(getResources().getColor(R.color.colorAccent));
+                }
+                break;
             default:
                 //do nothing
                 break;
@@ -343,8 +358,10 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
     public void currentPlayQueue(LinkedTreeMap params) {
         //update the current track view
         LinkedTreeMap track = (LinkedTreeMap) params.get("track");
-        Double index = (Double) params.get("index");
-        mediaList.put(index.intValue(), track);
+        if (track != null) {
+            Double index = (Double) params.get("index");
+            mediaList.put(index.intValue(), track);
+        }
     }
 
     public void updateCurrentTrack(Double index) {
@@ -366,7 +383,10 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
 
     public void buildmultimedia(LinkedTreeMap msg) {
         //things
+        Log.d(TAG, "buildmultimedia::" + msg.get("children"));
         LinkedTreeMap child = (LinkedTreeMap) msg.get("children");
-        //mMediaTree.put((String) child.get(""))
+        if (child != null) {
+            multiMediaList.addMultimedia(child);
+        }
     }
 }

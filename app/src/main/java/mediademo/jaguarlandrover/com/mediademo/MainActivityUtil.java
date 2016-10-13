@@ -33,7 +33,9 @@ public class MainActivityUtil {
             "GETPLAYBACKSTATUSATTRIBUTE",
             "GETPOSITIONATTRIBUTE",
             "GETDURATIONATTRIBUTE",
-            "GETCURRENTPLAYQUEUE");
+            "GETCURRENTPLAYQUEUE",
+            "GETCURRENTTRACKATTRIBUTE",
+            "DISCOVERMM");
 
     public static HashMap<Integer, String> initializeViewToServiceIdMap() {
         HashMap<Integer, String> initial = new HashMap<>();
@@ -44,6 +46,7 @@ public class MainActivityUtil {
         initial.put(R.id.repeat, MediaServiceIdentifier.REPEAT.value());
         initial.put(R.id.shuffle, MediaServiceIdentifier.SHUFFLE.value());
         initial.put(R.id.playList, MediaServiceIdentifier.REPEAT.value());
+        initial.put(R.id.volume, MediaServiceIdentifier.MUTE.value());
         return initial;
     }
 
@@ -56,6 +59,7 @@ public class MainActivityUtil {
         initial.put(MediaServiceIdentifier.REPEAT.value(), R.id.repeat);
         initial.put(MediaServiceIdentifier.SHUFFLE.value(), R.id.shuffle);
         initial.put(MediaServiceIdentifier.GETPLAYLIST.value(), R.id.playList);
+        initial.put(MediaServiceIdentifier.GETMUTE.value(), R.id.volume);
         return initial;
     }
 
@@ -68,8 +72,6 @@ public class MainActivityUtil {
         offImages.put(R.id.repeat, R.string.icon_repeat);
         offImages.put(R.id.shuffle, R.string.icon_shuffle);
         offImages.put(R.id.playList, R.string.icon_playlist);
-        offImages.put(R.id.plusButton, R.string.icon_plus);
-        offImages.put(R.id.minusButton, R.string.icon_minus);
         offImages.put(R.id.volume, R.string.icon_volume);
         return offImages;
     }
@@ -84,8 +86,6 @@ public class MainActivityUtil {
         states.put(R.id.shuffle, false);
         states.put(R.id.playList, false);
         states.put(R.id.volume, false);
-        states.put(R.id.plusButton, false);
-        states.put(R.id.minusButton, false);
         return states;
     }
 
@@ -98,7 +98,6 @@ public class MainActivityUtil {
         signals.put(context.getString(R.string.shuffle_signal), R.id.shuffle);
         signals.put(context.getString(R.string.shuffle_change), R.id.shuffle);
         signals.put(context.getString(R.string.repeat_signal), R.id.repeat);
-        signals.put(context.getString(R.string.volume_signal), R.id.volume);
         signals.put(context.getString(R.string.mute_signal), R.id.volume);
         return signals;
     }
@@ -125,20 +124,20 @@ public class MainActivityUtil {
         signals.put(context.getString(R.string.shuffle_signal),
                 new ParamGetter() {
             @Override
-            public Boolean getParam(Object param) { return (0 == ((Double) param).intValue()); }
+            public Boolean getParam(Object param) { return (1 == ((Double) param).intValue()); }
             });
         signals.put(context.getString(R.string.repeat_signal),
                 new ParamGetter() {
             @Override
             public Boolean getParam(Object doe) {
-                return (0 == ((Double) doe).intValue());
+                return (1 == ((Double) doe).intValue());
             }
         });
         signals.put(context.getString(R.string.shuffle_change),
                 new ParamGetter() {
                     @Override
                     public Boolean getParam(Object doe) {
-                        return (0 == ((Double) doe));
+                        return (1 == ((Double) doe).intValue());
                     }
                 });
         return signals;

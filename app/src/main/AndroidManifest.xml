@@ -20,6 +20,7 @@
 
         <activity android:name=".PreferencesActivity"/>
         <activity android:name=".MediaListActivity"/>
+        <activity android:name=".MultimediaListActivity" />
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
          App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data

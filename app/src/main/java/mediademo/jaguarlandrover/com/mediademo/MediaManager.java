@@ -134,6 +134,8 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
         invokeParams.put("sending_node", RVI_DOMAIN + "/" + RVINode.getLocalNodeIdentifier(applicationContext) + "/");
         invokeParams.put("target", target);
         invokeParams.put("requestedValue", value);
+        invokeParams.put("path", value);
+        invokeParams.put("uri", value);
         Log.d(TAG, "Invoke " + target + "::" + invokeParams);
         mediaServiceBundle.invokeService(SERVICE_ID, invokeParams, 360000);
     }

@@ -17,6 +17,7 @@ import android.app.ListActivity;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -90,6 +91,14 @@ public class MediaListActivity extends ListActivity {
                 //nothing
             }
         });
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+                handler.postDelayed(this, 2 * 1000);
+            }
+        }, 3 * 1000);
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.

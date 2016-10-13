@@ -36,7 +36,9 @@
     <string name="icon_plus">&#xf067;</string>
     <string name="icon_minus">&#xf068;</string>
     <string name="icon_pause">&#xf04c;</string>
+    <string name="icon_ex">&#xf00d;</string>
     <string name="icon_arrow_right">&#xf105;</string>
     <string name="playlist_signal">GETCURRENTPLAYQUEUE</string>
     <string name="get_children">LISTCHILDREN</string>
+    <string name="icon_no_volume">&#xf026;</string>
 </resources>
