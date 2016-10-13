@@ -26,8 +26,9 @@ public class MultimediaListObject {
     public void addMultimedia(LinkedTreeMap item) {
         if (this.medias.size() == 0 && this.root == null) {
                 this.root = (String) item.get("parent");
+        } else if (!this.medias.contains(item)) {
+            this.medias.add(item);
         }
-        this.medias.add(item);
     }
     private static final mediademo.jaguarlandrover.com.mediademo.MultimediaListObject holder = new mediademo.jaguarlandrover.com.mediademo.MultimediaListObject();
     public static mediademo.jaguarlandrover.com.mediademo.MultimediaListObject getInstance() { return holder; }

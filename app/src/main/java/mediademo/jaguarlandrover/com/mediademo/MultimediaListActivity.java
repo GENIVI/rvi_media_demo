@@ -143,11 +143,11 @@ class CustomOnClick implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (parent != null) {
-            MediaManager.invokeService(MediaServiceIdentifier.GETMEDIACHILD.value(), parent);
+        if (this.parent != MultimediaListObject.getInstance().getRoot()) {
+            MediaManager.invokeService(MediaServiceIdentifier.GETMEDIACHILD.value(), this.parent);
         } else {
             MultimediaListObject.getInstance().clearData();
-            runner.finish();
+            this.runner.finish();
         }
     }
 }
@@ -186,12 +186,7 @@ class CustomOnItemClick implements AdapterView.OnItemClickListener {
     }
 
     public void setParent(String container) {
-        if (parent == null) {
-            parent = container;
-            observer.setParent(null); // so it will finish rather than re-load data
-        } else {
-            parent = container;
-            observer.setParent(container);
-        }
+        parent = container;
+        observer.setParent(container);
     }
 }

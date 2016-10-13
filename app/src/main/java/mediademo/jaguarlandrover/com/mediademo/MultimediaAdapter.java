@@ -69,9 +69,11 @@ public class MultimediaAdapter extends BaseAdapter {
     public void clearData() {
         //data.clear();
         MultimediaListObject.getInstance().clearData();
+        notifyDataSetChanged();
     }
 
     public void update() {
         data = MultimediaListObject.getInstance().getMultiMedia();
+        notifyDataSetChanged();
     }
 }
