@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -70,6 +71,16 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         connectedToast.show();
         mRviConnected = true;
         MediaManager.subscribeToMediaRvi();
+        if (!mInitialized) {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    MediaManager.initializeUIState();
+                }
+            }, 2 * 1000);
+            mInitialized = true;
+        }
     }
 
     @Override

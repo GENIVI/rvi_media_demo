@@ -54,10 +54,10 @@ public class MultimediaListActivity extends AppCompatActivity {
         Toolbar settingsToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         settingsToolbar.setTitle("Multimedia");
         settingsToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
-        CustomOnClick navigator = new CustomOnClick(null, this);
-        settingsToolbar.setNavigationOnClickListener(navigator);
         ListView media_list = (ListView) findViewById(android.R.id.list);
         adapter = new MultimediaAdapter(this, MultimediaListObject.getInstance().getMultiMedia());
+        CustomOnClick navigator = new CustomOnClick(null, this, adapter);
+        settingsToolbar.setNavigationOnClickListener(navigator);
         media_list.setAdapter(adapter);
         media_list.setOnItemClickListener(new CustomOnItemClick(navigator, adapter, this));
         final Handler handler = new Handler();
@@ -66,9 +66,9 @@ public class MultimediaListActivity extends AppCompatActivity {
             public void run() {
                 adapter.update();
                 adapter.notifyDataSetChanged();
-                handler.postDelayed(this, 2 * 1000);
+                handler.postDelayed(this, 1 * 1000);
             }
-        }, 3 * 1000);
+        }, 2 * 1000);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -131,10 +131,12 @@ public class MultimediaListActivity extends AppCompatActivity {
 class CustomOnClick implements View.OnClickListener {
     private String parent = null;
     private Activity runner = null;
+    private MultimediaAdapter adapter = null;
 
-    public CustomOnClick(String parent, Activity container) {
+    public CustomOnClick(String parent, Activity container, MultimediaAdapter adapter) {
         this.parent = parent;
         this.runner = container;
+        this.adapter = adapter;
     }
 
     public void setParent(String container) {
@@ -143,7 +145,8 @@ class CustomOnClick implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (this.parent != MultimediaListObject.getInstance().getRoot()) {
+        if (this.parent != null) {
+            this.adapter.clearData();
             MediaManager.invokeService(MediaServiceIdentifier.GETMEDIACHILD.value(), this.parent);
         } else {
             MultimediaListObject.getInstance().clearData();
@@ -153,13 +156,11 @@ class CustomOnClick implements View.OnClickListener {
 }
 
 class CustomOnItemClick implements AdapterView.OnItemClickListener {
-    private String parent = null;
     private CustomOnClick observer = null;
     private MultimediaAdapter adapter = null;
     private Activity activity = null;
 
     public CustomOnItemClick(CustomOnClick watcher, MultimediaAdapter adapt, Activity active) {
-        parent = null;
         observer = watcher;
         adapter = adapt;
         activity = active;
@@ -170,7 +171,6 @@ class CustomOnItemClick implements AdapterView.OnItemClickListener {
         String path = (String) container.get("path");
         setParent((String) container.get("parent"));
         String type = (String) container.get("type");
-        String uri = (String) container.get("uri");
         if (type.equalsIgnoreCase("container")) {
             adapter.clearData();
             if (path != null) {
@@ -186,7 +186,6 @@ class CustomOnItemClick implements AdapterView.OnItemClickListener {
     }
 
     public void setParent(String container) {
-        parent = container;
         observer.setParent(container);
     }
 }
