@@ -136,6 +136,7 @@ public class MediaManager implements ServiceBundle.ServiceBundleListener {
         invokeParams.put("requestedValue", value);
         invokeParams.put("path", value);
         invokeParams.put("uri", value);
+        invokeParams.put("pos", value);
         Log.d(TAG, "Invoke " + target + "::" + invokeParams);
         mediaServiceBundle.invokeService(SERVICE_ID, invokeParams, 360000);
     }

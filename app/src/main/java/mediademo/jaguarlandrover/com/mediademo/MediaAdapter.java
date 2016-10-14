@@ -3,6 +3,7 @@ package mediademo.jaguarlandrover.com.mediademo;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 public class MediaAdapter extends BaseAdapter {
     private ArrayList<LinkedTreeMap> data;
     private Activity activity;
+    private String TAG = "MediaDemo:MediaAdapter";
     private static LayoutInflater inflater = null;
 
     public MediaAdapter(Activity active, ArrayList<LinkedTreeMap> objects) {
@@ -49,7 +51,7 @@ public class MediaAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View view_id = convertView;
         if (convertView == null) {
             view_id = inflater.inflate(R.layout.list_row, null);
@@ -65,28 +67,23 @@ public class MediaAdapter extends BaseAdapter {
         Button ex_icon = (Button) view_id.findViewById(R.id.remove_button);
         //get information
         //setup info
-        song_title.setText(song.get("displayName").toString() + " - " + song.get("album").toString());
-        artist_name.setText(song.get("artist").toString());
-        // album_art.setImageURI(song.get_album_art());
-        album_art.setImageResource(R.drawable.ic_music_video_black_24dp);
-        ex_icon.setOnClickListener(new RemoveOnClick(position, this));
-        return view_id;
-    }
-}
-
-class RemoveOnClick implements View.OnClickListener {
-    private Integer position = null;
-    private BaseAdapter parent = null;
-
-    public RemoveOnClick(Integer position, BaseAdapter container) {
-        this.position = position;
-        this.parent = container;
-    }
-    @Override
-    public void onClick(View v) {
-        if (this.position != null) {
-            MediaListObject.getInstance().remove(this.position);
-            this.parent.notifyDataSetChanged();
+        if (song != null) {
+            song_title.setText(song.get("displayName").toString() + " - " + song.get("album").toString());
+            artist_name.setText(song.get("artist").toString());
+            // album_art.setImageURI(song.get_album_art());
+            album_art.setImageResource(R.drawable.ic_music_video_black_24dp);
+            ex_icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MediaListObject.getInstance().remove(position);
+                    MediaManager.invokeService(MediaServiceIdentifier.PLAYQUEUE_REMOVE.value(), position);
+                    data.remove(position);
+                    notifyDataSetChanged();
+                }
+            });
+        } else {
+            song_title.setText("empty");
         }
+        return view_id;
     }
 }
