@@ -34,8 +34,7 @@ public class MainActivityUtil {
             "GETPOSITIONATTRIBUTE",
             "GETDURATIONATTRIBUTE",
             "GETCURRENTPLAYQUEUE",
-            "GETCURRENTTRACKATTRIBUTE",
-            "DISCOVERMM");
+            "GETCURRENTTRACKATTRIBUTE");
 
     public static HashMap<Integer, String> initializeViewToServiceIdMap() {
         HashMap<Integer, String> initial = new HashMap<>();

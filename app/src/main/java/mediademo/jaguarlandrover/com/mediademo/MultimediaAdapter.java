@@ -3,6 +3,7 @@ package mediademo.jaguarlandrover.com.mediademo;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +13,20 @@ import android.widget.TextView;
 import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by aren on 10/11/16.
  */
 
 public class MultimediaAdapter extends BaseAdapter {
-    private ArrayList<LinkedTreeMap> data;
+    private LinkedTreeMap<String, LinkedTreeMap> data;
     private Activity activity;
     private static LayoutInflater inflater = null;
+    private String TAG = "MMAdapter";
 
-    public MultimediaAdapter(Activity active, ArrayList<LinkedTreeMap> objects) {
+    public MultimediaAdapter(Activity active, LinkedTreeMap<String, LinkedTreeMap> objects) {
         activity = active;
         data = objects;
         inflater = (LayoutInflater) active.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -39,12 +43,23 @@ public class MultimediaAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return data.get(position);
+        LinkedTreeMap[] temp = data.values().toArray(new LinkedTreeMap[data.values().size()]);
+        return temp[position];
     }
 
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    public String getRoot() {
+        LinkedTreeMap item = (LinkedTreeMap) getItem(0);
+        Object parent = item.get("parent");
+        if (parent != null) {
+            return (String) parent;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -56,7 +71,7 @@ public class MultimediaAdapter extends BaseAdapter {
             Typeface font = Typeface.createFromAsset(activity.getAssets(), "fontawesome-webfont.ttf");
             info.setTypeface(font);
         }
-        LinkedTreeMap song = data.get(position);
+        LinkedTreeMap song = (LinkedTreeMap) getItem(position);
         //get views
         TextView info = (TextView) view_id.findViewById(android.R.id.text1);
         //get information
@@ -66,14 +81,8 @@ public class MultimediaAdapter extends BaseAdapter {
         return view_id;
     }
 
-    public void clearData() {
-        //data.clear();
-        MultimediaListObject.getInstance().clearData();
-        notifyDataSetChanged();
-    }
-
-    public void update() {
-        data = MultimediaListObject.getInstance().getMultiMedia();
+    public void update(String path) {
+        data = MultimediaListObject.getInstance().getMultiMedia(path);
         notifyDataSetChanged();
     }
 }

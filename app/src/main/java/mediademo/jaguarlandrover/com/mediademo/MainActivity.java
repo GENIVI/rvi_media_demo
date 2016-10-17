@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    MediaManager.invokeService(MediaServiceIdentifier.GETMULTIMEDIA.value(), null);
                     MediaManager.initializeUIState();
                 }
             }, 2 * 1000);
@@ -231,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
                 return true;
             case R.id.library_option:
                 Log.d(TAG, "You selected library option");
-                if (multiMediaList.getMultiMedia().size() == 0) {
+                if (multiMediaList.getMultiMedia(null).size() == 0) {
                     multiMediaList.clearData();
                     MediaManager.invokeService(MediaServiceIdentifier.GETMULTIMEDIA.value(), null);
                 }
@@ -397,6 +398,11 @@ public class MainActivity extends AppCompatActivity implements MediaManagerListe
         Log.d(TAG, "buildmultimedia::" + msg.get("children"));
         LinkedTreeMap child = (LinkedTreeMap) msg.get("children");
         if (child != null) {
+            String type = child.get("type").toString();
+            String path = child.get("path").toString();
+            if (type.equalsIgnoreCase("container")) {
+                MediaManager.invokeService(MediaServiceIdentifier.GETMEDIACHILD.value(), path);
+            }
             multiMediaList.addMultimedia(child);
         }
     }
